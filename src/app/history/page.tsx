@@ -6,7 +6,19 @@ import { PageLayout } from '@/components/PageLayout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Blockchain, Token, BridgeSpeed } from '@/lib/appkit-types';
-import { Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, GitBranch, ArrowLeftRight, Send, Clock, ChevronRight, ChevronDown } from 'lucide-react';
+import { 
+  Loader2, 
+  CheckCircle, 
+  AlertCircle, 
+  ExternalLink, 
+  Copy, 
+  GitBranch, 
+  ArrowLeftRight, 
+  Send, 
+  ChevronRight, 
+  ChevronDown 
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Transaction {
   id: string;
@@ -102,7 +114,7 @@ const mockTransactions: Transaction[] = [
   },
 ];
 
-const chainNames: Record<Blockchain, string> = {
+const chainNames: Record<string, string> = {
   arc_testnet: 'Arc Testnet',
   ethereum: 'Ethereum',
   base: 'Base',
@@ -110,6 +122,8 @@ const chainNames: Record<Blockchain, string> = {
   optimism: 'Optimism',
   polygon: 'Polygon',
   avalanche: 'Avalanche',
+  solana: 'Solana',
+  stellar: 'Stellar',
 };
 
 const typeIcons = {
@@ -184,27 +198,30 @@ export default function HistoryPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex gap-2 overflow-x-auto pb-2">
-              {(['all', 'send', 'bridge', 'swap'] as const).map(f => (
-                <Button
-                  key={f}
-                  variant={filter === f ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFilter(f)}
-                  className="whitespace-nowrap gap-2"
-                >
-                  {f === 'all' ? (
-                    <>All <span className="text-xs opacity-70">{mockTransactions.length}</span></>
-                  ) : (
-                    <>
-                      <typeIcons[f] className="h-3.5 w-3.5" />
-                      {f.charAt(0).toUpperCase() + f.slice(1)}
-                      <span className="text-xs opacity-70">
-                        {mockTransactions.filter(t => t.type === f).length}
-                      </span>
-                    </>
-                  )}
-                </Button>
-              ))}
+              {(['all', 'send', 'bridge', 'swap'] as const).map(f => {
+                const FilterIcon = typeIcons[f];
+                return (
+                  <Button
+                    key={f}
+                    variant={filter === f ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setFilter(f)}
+                    className="whitespace-nowrap gap-2"
+                  >
+                    {f === 'all' ? (
+                      <>All <span className="text-xs opacity-70">{mockTransactions.length}</span></>
+                    ) : (
+                      <>
+                        <FilterIcon className="h-3.5 w-3.5" />
+                        {f.charAt(0).toUpperCase() + f.slice(1)}
+                        <span className="text-xs opacity-70">
+                          {mockTransactions.filter(t => t.type === f).length}
+                        </span>
+                      </>
+                    )}
+                  </Button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -229,128 +246,136 @@ export default function HistoryPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredTxs.map((tx, index) => (
-                <motion.div
-                  key={tx.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => handleToggleExpand(tx.id)}
-                  className="group"
-                >
-                  <Card className="overflow-hidden transition-all duration-200 hover:border-cyan-500/20 cursor-pointer">
-                    <CardContent className="p-4">
-                      {/* Main Row */}
-                      <div className="flex items-center gap-4">
-                        {/* Type Badge */}
-                        <div className={cn(
-                          'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0',
-                          typeColors[tx.type]
-                        )}>
-                          <typeIcons[tx.type] className="h-5 w-5" />
-                        </div>
+              filteredTxs.map((tx, index) => {
+                const TypeIcon = typeIcons[tx.type];
+                const StatusIcon = statusConfig[tx.status].icon;
+                const RouteIcon = ChevronRight;
 
-                        {/* Details */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-white truncate">
-                              {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
-                              {tx.type === 'bridge' && ` ${tx.fromChain} → ${tx.toChain}`}
-                            </span>
-                            {tx.speed && (
-                              <span className="px-1.5 py-0.5 text-xs rounded-full bg-gray-800 border border-gray-700 text-gray-300">
-                                {tx.speed}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-3 mt-1 text-sm text-gray-400">
-                            <span className="truncate">{formatAmount(tx.amount, tx.fromToken)}</span>
-                            {tx.toToken && tx.fromToken !== tx.toToken && (
-                              <>
-                                <span className="text-gray-600">→</span>
-                                <span className="truncate">{formatAmount(tx.amount, tx.toToken)}</span>
-                              </>
-                            )}
-                            <span className="text-gray-500">{chainNames[tx.chain]}</span>
-                            <span>{formatDate(tx.timestamp)}</span>
-                          </div>
-                        </div>
-
-                        {/* Status */}
-                        <div className="flex items-center gap-3">
+                return (
+                  <motion.div
+                    key={tx.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => handleToggleExpand(tx.id)}
+                    className="group"
+                  >
+                    <Card className="overflow-hidden transition-all duration-200 hover:border-cyan-500/20 cursor-pointer">
+                      <CardContent className="p-4">
+                        {/* Main Row */}
+                        <div className="flex items-center gap-4">
+                          {/* Type Badge */}
                           <div className={cn(
-                            'px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5',
-                            statusConfig[tx.status].bg
+                            'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0',
+                            typeColors[tx.type]
                           )}>
-                            <statusConfig[tx.status].icon className={cn('h-3.5 w-3.5', statusConfig[tx.status].color)} />
-                            {statusConfig[tx.status].label}
+                            <TypeIcon className="h-5 w-5" />
                           </div>
-                          <ChevronDown className={cn('h-5 w-5 text-gray-400 transition-transform', expandedId === tx.id && 'rotate-180')} />
-                        </div>
-                      </div>
 
-                      {/* Expanded Details */}
-                      <AnimatePresence>
-                        {expandedId === tx.id && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="mt-4 pt-4 border-t border-gray-800/50 space-y-3"
-                          >
-                            <div className="grid grid-cols-2 gap-3 text-sm">
-                              <div className="bg-gray-900/50 rounded-xl p-3">
-                                <p className="text-gray-500">Transaction Hash</p>
-                                <div className="flex items-center gap-2 mt-1 font-mono text-white truncate">
-                                  <span>{tx.txHash}</span>
-                                  <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(tx.txHash); }}>
-                                    <Copy className="h-3.5 w-3.5" />
-                                  </Button>
-                                  <a href={`https://testnet.arcblock.io/tx/${tx.txHash}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300">
-                                    <ExternalLink className="h-3.5 w-3.5" />
-                                  </a>
-                                </div>
-                              </div>
-                              <div className="bg-gray-900/50 rounded-xl p-3">
-                                <p className="text-gray-500">Fee</p>
-                                <p className="font-mono text-white mt-1">{tx.fee} {tx.feeToken}</p>
-                              </div>
-                              {tx.fromChain && tx.toChain && (
-                                <div className="bg-gray-900/50 rounded-xl p-3 col-span-2">
-                                  <p className="text-gray-500">Route</p>
-                                  <p className="font-medium text-white mt-1 flex items-center gap-2">
-                                    <span>{chainNames[tx.fromChain]}</span>
-                                    <ChevronRight className="h-4 w-4 text-gray-500" />
-                                    <span>{chainNames[tx.toChain]}</span>
-                                  </p>
-                                </div>
-                              )}
-                              {tx.recipient && (
-                                <div className="bg-gray-900/50 rounded-xl p-3">
-                                  <p className="text-gray-500">Recipient</p>
-                                  <p className="font-mono text-white mt-1 truncate">{tx.recipient}</p>
-                                </div>
-                              )}
-                              {tx.errorMessage && (
-                                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 col-span-2 text-red-300">
-                                  <p className="text-gray-500">Error</p>
-                                  <p className="mt-1">{tx.errorMessage}</p>
-                                </div>
+                          {/* Details */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-white truncate">
+                                {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
+                                {tx.type === 'bridge' && tx.fromChain && tx.toChain && (
+                                  <> {tx.fromChain} \u2192 {tx.toChain}</>
+                                )}
+                              </span>
+                              {tx.speed && (
+                                <span className="px-1.5 py-0.5 text-xs rounded-full bg-gray-800 border border-gray-700 text-gray-300">
+                                  {tx.speed}
+                                </span>
                               )}
                             </div>
-                            {tx.status === 'pending' && (
-                              <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-3 text-yellow-300">
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                                <span>Transaction is being processed...</span>
+                            <div className="flex items-center gap-3 mt-1 text-sm text-gray-400">
+                              <span className="truncate">{formatAmount(tx.amount, tx.fromToken)}</span>
+                              {tx.toToken && tx.fromToken !== tx.toToken && (
+                                <>
+                                  <span className="text-gray-600">\u2192</span>
+                                  <span className="truncate">{formatAmount(tx.amount, tx.toToken)}</span>
+                                </>
+                              )}
+                              <span className="text-gray-500">{chainNames[tx.chain] || tx.chain}</span>
+                              <span>{formatDate(tx.timestamp)}</span>
+                            </div>
+                          </div>
+
+                          {/* Status */}
+                          <div className="flex items-center gap-3">
+                            <div className={cn(
+                              'px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5',
+                              statusConfig[tx.status].bg
+                            )}>
+                              <StatusIcon className={cn('h-3.5 w-3.5', statusConfig[tx.status].color)} />
+                              {statusConfig[tx.status].label}
+                            </div>
+                            <ChevronDown className={cn('h-5 w-5 text-gray-400 transition-transform', expandedId === tx.id && 'rotate-180')} />
+                          </div>
+                        </div>
+
+                        {/* Expanded Details */}
+                        <AnimatePresence>
+                          {expandedId === tx.id && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="mt-4 pt-4 border-t border-gray-800/50 space-y-3"
+                            >
+                              <div className="grid grid-cols-2 gap-3 text-sm">
+                                <div className="bg-gray-900/50 rounded-xl p-3">
+                                  <p className="text-gray-500">Transaction Hash</p>
+                                  <div className="flex items-center gap-2 mt-1 font-mono text-white truncate">
+                                    <span>{tx.txHash}</span>
+                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(tx.txHash); }}>
+                                      <Copy className="h-3.5 w-3.5" />
+                                    </Button>
+                                    <a href={`https://testnet.arcblock.io/tx/${tx.txHash}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300">
+                                      <ExternalLink className="h-3.5 w-3.5" />
+                                    </a>
+                                  </div>
+                                </div>
+                                <div className="bg-gray-900/50 rounded-xl p-3">
+                                  <p className="text-gray-500">Fee</p>
+                                  <p className="font-mono text-white mt-1">{tx.fee} {tx.feeToken}</p>
+                                </div>
+                                {tx.fromChain && tx.toChain && (
+                                  <div className="bg-gray-900/50 rounded-xl p-3 col-span-2">
+                                    <p className="text-gray-500">Route</p>
+                                    <p className="font-medium text-white mt-1 flex items-center gap-2">
+                                      <span>{chainNames[tx.fromChain] || tx.fromChain}</span>
+                                      <RouteIcon className="h-4 w-4 text-gray-500" />
+                                      <span>{chainNames[tx.toChain] || tx.toChain}</span>
+                                    </p>
+                                  </div>
+                                )}
+                                {tx.recipient && (
+                                  <div className="bg-gray-900/50 rounded-xl p-3">
+                                    <p className="text-gray-500">Recipient</p>
+                                    <p className="font-mono text-white mt-1 truncate">{tx.recipient}</p>
+                                  </div>
+                                )}
+                                {tx.errorMessage && (
+                                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 col-span-2 text-red-300">
+                                    <p className="text-gray-500">Error</p>
+                                    <p className="mt-1">{tx.errorMessage}</p>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                              {tx.status === 'pending' && (
+                                <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-3 text-yellow-300">
+                                  <Loader2 className="h-5 w-5 animate-spin" />
+                                  <span>Transaction is being processed...</span>
+                                </div>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })
             )}
           </motion.div>
         </AnimatePresence>
@@ -367,8 +392,4 @@ export default function HistoryPage() {
       </div>
     </PageLayout>
   );
-}
-
-function cn(...inputs: (string | undefined | null | false)[]): string {
-  return inputs.filter(Boolean).join(' ');
 }
