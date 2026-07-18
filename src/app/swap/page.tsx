@@ -9,7 +9,7 @@ import { AmountInput } from '@/components/AmountInput';
 import { ChainSelector } from '@/components/ChainSelector';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { Blockchain, Token } from '@/lib/appkit-types';
-import { Loader2, CheckCircle, AlertCircle, RotateCcw, ArrowUpRight, ArrowDownLeft, SwapHorizontal } from 'lucide-react';
+import { Loader2, CheckCircle, AlertCircle, RotateCcw, ArrowUpRight, ArrowDownLeft, ArrowLeftRight } from 'lucide-react';
 
 const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism'];
 const mockTokens: Token[] = ['USDC', 'USDT', 'EURC'];
@@ -99,7 +99,7 @@ export default function SwapPage() {
           className="text-center mb-4"
         >
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-600 mb-4">
-            <SwapHorizontal className="h-8 w-8 text-white" />
+            <ArrowLeftRight className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white">Swap Tokens</h1>
           <p className="text-gray-400 mt-2">Exchange stablecoins on the same chain with low slippage</p>
@@ -332,7 +332,7 @@ export default function SwapPage() {
           <CardContent className="p-6">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                <SwapHorizontal className="h-5 w-5 text-green-400" />
+                <ArrowLeftRight className="h-5 w-5 text-green-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-white mb-2">About Swaps</h3>
