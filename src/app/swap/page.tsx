@@ -339,7 +339,7 @@ export default function SwapPage() {
                 <ul className="text-sm text-gray-400 space-y-1">
                   <li>• Swaps happen on the same chain (no bridging)</li>
                   <li>• 0.1% swap fee + network gas (paid in USDC)</li>
-                  <li>• Price impact < 0.01% for stablecoin pairs</li>
+                  <li>• Price impact under 0.01% for stablecoin pairs</li>
                   <li>• Slippage tolerance: 0.5% default</li>
                 </ul>
               </div>
