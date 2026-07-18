@@ -1,0 +1,82 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  @apply text-4xl md:text-5xl font-bold text-gray-900 mb-4;
+}
+
+.subtitle {
+  @apply text-lg md:text-xl text-gray-600 max-w-2xl mx-auto;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-md p-6 border border-gray-100 transition hover:shadow-lg;
+}
+
+.avatar {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.cardTitle {
+  @apply text-xl font-semibold text-gray-900 mb-2;
+}
+
+.cardDesc {
+  @apply text-gray-700 mb-4 leading-relaxed;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+}
+
+.features li {
+  @apply text-gray-600 mb-1;
+}
+
+.tech {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  @apply text-2xl font-bold text-gray-900 mb-3;
+}
+
+.techGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.techGrid span {
+  @apply bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-full;
+}
+
+.footer {
+  text-align: center;
+  @apply text-gray-500 text-sm border-t border-gray-200 pt-4;
+}
