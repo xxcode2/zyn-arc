@@ -29,7 +29,7 @@ export function SendPaymentForm({
   const { isConnected } = useAccount();
   const { usdc, eurc, refetch } = useTokenBalances();
   const { send, status, hash, errorMessage, reset } = useSendPayment();
-  const { push } = useToast();
+  const { addToast } = useToast();
 
   const [token, setToken] = React.useState<TokenSymbol>(initialToken);
   const [recipient, setRecipient] = React.useState(initialRecipient);
@@ -61,10 +61,10 @@ export function SendPaymentForm({
   React.useEffect(() => {
     if (status === 'success') {
       refetch();
-      push({ variant: 'success', title: 'Payment sent', description: `${amount} ${token} to ${truncateAddress(recipient)}` });
+      addToast({ variant: 'success', title: 'Payment sent', description: `${amount} ${token} to ${truncateAddress(recipient)}` });
     }
     if (status === 'error' && errorMessage) {
-      push({ variant: 'error', title: 'Payment failed', description: errorMessage });
+      addToast({ variant: 'error', title: 'Payment failed', description: errorMessage });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);

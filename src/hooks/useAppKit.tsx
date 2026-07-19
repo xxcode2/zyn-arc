@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { AppKit, BridgeParams, SwapParams, SendParams, DepositParams, SpendParams, Blockchain, Token } from '@/lib/appkit-types';
+import * as React from 'react';
+import { AppKit, Blockchain, Token } from '@/lib/appkit-types';
 import { getAppKit } from '@/lib/appkit';
 
 interface UnifiedBalance {
@@ -34,7 +34,7 @@ interface AppKitContextType {
   refreshChains: () => Promise<void>;
 }
 
-const AppKitContext = createContext<AppKitContextType | null>(null);
+const AppKitContext = React.createContext<AppKitContextType | null>(null);
 
 const MOCK_CHAINS: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism', 'polygon', 'avalanche'];
 const MOCK_TOKENS: Token[] = ['USDC', 'USDT', 'EURC'];
@@ -51,16 +51,28 @@ const MOCK_UNIFIED: UnifiedBalance = {
   balances: MOCK_BALANCES,
 };
 
-export function AppKitProvider({ children }: { children: ReactNode }) {
-  const [kit, setKit] = useState<AppKit | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [unifiedBalance, setUnifiedBalance] = useState<UnifiedBalance | null>(null);
-  const [chainBalances, setChainBalances] = useState<ChainBalance[]>([]);
-  const [isLoadingBalances, setIsLoadingBalances] = useState(false);
-  const [supportedChains] = useState<Blockchain[]>(MOCK_CHAINS);
-  const [supportedTokens] = useState<Token[]>(MOCK_TOKENS);
+export function AppKitProvider({ children }: { children: React.ReactNode }) {
+  const [kit, setKit] = React.useState<AppKit | null>(null);
+  const [isInitialized, setIsInitialized] = React.useState(false);
+  const [unifiedBalance, setUnifiedBalance] = React.useState<UnifiedBalance | null>(null);
+  const [chainBalances, setChainBalances] = React.useState<ChainBalance[]>([]);
+  const [isLoadingBalances, setIsLoadingBalances] = React.useState(false);
+  const [supportedChains] = React.useState<Blockchain[]>(MOCK_CHAINS);
+  const [supportedTokens] = React.useState<Token[]>(MOCK_TOKENS);
 
-  const initialize = async () => {
+  const refreshBalances = React.useCallback(async () => {
+    setIsLoadingBalances(true);
+    try {
+      setUnifiedBalance(MOCK_UNIFIED);
+      setChainBalances(MOCK_BALANCES);
+    } catch (error) {
+      console.error('Failed to refresh balances:', error);
+    } finally {
+      setIsLoadingBalances(false);
+    }
+  }, []);
+
+  const initialize = React.useCallback(async () => {
     if (isInitialized) return;
     try {
       const appKit = getAppKit();
@@ -71,31 +83,17 @@ export function AppKitProvider({ children }: { children: ReactNode }) {
       console.error('Failed to initialize AppKit:', error);
       setIsInitialized(true);
     }
-  };
+  }, [isInitialized, refreshBalances]);
 
-  const refreshBalances = async () => {
-    setIsLoadingBalances(true);
-    try {
-      // In real implementation: const balance = await kit?.unifiedBalance.getBalances();
-      setUnifiedBalance(MOCK_UNIFIED);
-      setChainBalances(MOCK_BALANCES);
-    } catch (error) {
-      console.error('Failed to refresh balances:', error);
-    } finally {
-      setIsLoadingBalances(false);
-    }
-  };
-
-  const refreshChains = async () => {
+  const refreshChains = React.useCallback(async () => {
     try {
       // const chains = await kit?.getSupportedChains();
-      // setSupportedChains(chains);
     } catch (error) {
       console.error('Failed to refresh chains:', error);
     }
-  };
+  }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     initialize();
   }, [initialize]);
 
@@ -118,7 +116,7 @@ export function AppKitProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAppKit() {
-  const context = useContext(AppKitContext);
+  const context = React.useContext(AppKitContext);
   if (!context) {
     throw new Error('useAppKit must be used within an AppKitProvider');
   }

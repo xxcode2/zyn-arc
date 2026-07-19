@@ -3,8 +3,7 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
-import { Minus, Plus, Maximize2, Copy, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, Maximize2, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface AmountInputProps {
   value: string;
@@ -35,16 +34,17 @@ export function AmountInput({
   showMaxButton = true,
   onMaxClick,
 }: AmountInputProps) {
+  void decimals;
   const [localValue, setLocalValue] = React.useState(value);
   const [focused, setFocused] = React.useState(false);
-  const [showCopied, setShowCopied] = React.useState(false);
+  const [showCopied] = React.useState(false);
 
   React.useEffect(() => {
     if (!focused) setLocalValue(value);
   }, [value, focused]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newValue = e.target.value;
+    const newValue = e.target.value;
     
     if (newValue === '') {
       setLocalValue('');
@@ -116,7 +116,7 @@ export function AmountInput({
               (!hasError && !isOverBalance) && 'border-gray-700/50 hover:border-gray-600/50',
               'rounded-xl'
             )}
-            aria-invalid={hasError || isOverBalance}
+            aria-invalid={hasError || isOverBalance ? true : undefined}
             aria-describedby={hasError ? 'amount-error' : isOverBalance ? 'amount-warning' : undefined}
           />
           

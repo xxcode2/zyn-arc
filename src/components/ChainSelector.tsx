@@ -7,8 +7,8 @@ import { ChevronDown, Check, Globe } from 'lucide-react';
 import { Blockchain, SupportedChain } from '@/lib/appkit-types';
 
 interface ChainSelectorProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: Blockchain;
+  onChange: (value: Blockchain) => void;
   chains: SupportedChain[];
   placeholder?: string;
   label?: string;

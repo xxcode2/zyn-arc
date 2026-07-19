@@ -4,19 +4,18 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { PageLayout } from '@/components/PageLayout';
 import { BalanceCard } from '@/components/BalanceCard';
-import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ArrowUpRight, ArrowDownLeft, ExternalLink, GitBranch, ArrowLeftRight, History, Loader2, Send, SwapHorizontal, Wallet, Globe, ChevronDown, Plus, Minus, Maximize2, CheckCircle, AlertCircle, RotateCcw, QrCode, Copy, Scan } from 'lucide-react';
-import { Blockchain, SupportedChain, SupportedToken, Token } from '@/lib/appkit-types';
+import { ExternalLink, GitBranch, ArrowLeftRight, History, Loader2, Send } from 'lucide-react';
+import type { SupportedChain } from '@/lib/appkit-types';
 
 const mockChains: SupportedChain[] = [
   { id: 'arc_testnet', name: 'Arc Testnet', logo: '🔷', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT', 'EURC'], isTestnet: true },
-  { id: 'ethereum', name: 'Ethereum Sepolia', logo: 'Ξ', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
-  { id: 'base', name: 'Base Sepolia', logo: '🔵', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
-  { id: 'arbitrum', name: 'Arbitrum Sepolia', logo: '🔵', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
-  { id: 'optimism', name: 'Optimism Sepolia', logo: '🔴', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
-  { id: 'polygon', name: 'Polygon Amoy', logo: '🟣', nativeToken: 'POL', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
-  { id: 'avalanche', name: 'Avalanche Fuji', logo: '🔺', nativeToken: 'AVAX', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'ethereum', name: 'Ethereum Sepolia', logo: 'Ξ', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'base', name: 'Base Sepolia', logo: '🔵', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'arbitrum', name: 'Arbitrum Sepolia', logo: '🔵', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'optimism', name: 'Optimism Sepolia', logo: '🔴', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'polygon', name: 'Polygon Amoy', logo: '🟣', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'avalanche', name: 'Avalanche Fuji', logo: '🔺', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
 ];
 
 const mockBalances = [

@@ -4,12 +4,13 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'outline' | 'ghost' | 'destructive' | 'secondary';
+  variant?: 'default' | 'outline' | 'ghost' | 'destructive' | 'secondary' | 'primary';
   size?: 'default' | 'sm' | 'lg' | 'icon';
+  loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'default', size = 'default', disabled, children, ...props }, ref) => {
+  ({ className, variant = 'default', size = 'default', disabled, loading, children, ...props }, ref) => {
     const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]';
 
     const variants = {
@@ -18,6 +19,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ghost: 'text-cyan-300 hover:bg-cyan-500/10',
       destructive: 'bg-gradient-to-r from-red-600 to-rose-600 text-white hover:from-red-500 hover:to-rose-500 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] shadow-lg shadow-red-500/20',
       secondary: 'bg-gray-800/50 border border-gray-700/50 text-white hover:bg-gray-700/50 hover:border-gray-600/50',
+      primary: 'bg-gradient-to-r from-cyan-600 to-blue-600 text-gray-950 hover:from-cyan-500 hover:to-blue-500 hover:shadow-[0_0_20px_rgba(95,191,255,0.4)] shadow-lg shadow-cyan-500/20',
     };
 
     const sizes = {
@@ -31,7 +33,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
-        disabled={disabled}
+        disabled={disabled || loading}
         {...props}
       >
         {children}

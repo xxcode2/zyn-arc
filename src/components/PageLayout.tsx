@@ -5,16 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { 
-  Home, 
-  Send, 
-  GitBranch, 
-  ArrowLeftRight, 
-  History, 
+import {
+  Home,
+  Send,
+  GitBranch,
+  ArrowLeftRight,
+  History,
   Wallet,
   Menu,
   X,
-  ChevronDown
 } from 'lucide-react';
 
 const navigation = [
@@ -164,13 +163,15 @@ export function Footer() {
 }
 
 export function PageLayout({ children }: { children: React.ReactNode }) {
+  const pageKey = React.useMemo(() => Math.random().toString(36).slice(2, 9), [children]);
+
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col">
       <Header />
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AnimatePresence mode="wait">
           <motion.div
-            key={children}
+            key={pageKey}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}

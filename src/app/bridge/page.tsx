@@ -9,8 +9,8 @@ import { AmountInput } from '@/components/AmountInput';
 import { ChainSelector } from '@/components/ChainSelector';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { TxStepper } from '@/components/TxStepper';
-import { Blockchain, Token, BridgeSpeed, SupportedChain } from '@/lib/appkit-types';
-import { GitBranch, Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, ArrowLeftRight, RotateCcw, ChevronRight } from 'lucide-react';
+import { Blockchain, Token, BridgeSpeed } from '@/lib/appkit-types';
+import { GitBranch, Loader2, CheckCircle, AlertCircle, ArrowLeftRight, RotateCcw } from 'lucide-react';
 
 const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism', 'polygon', 'avalanche'];
 const mockTokens: Token[] = ['USDC', 'USDT', 'EURC'];
@@ -23,6 +23,8 @@ const chainNames: Record<Blockchain, string> = {
   optimism: 'Optimism Sepolia',
   polygon: 'Polygon Amoy',
   avalanche: 'Avalanche Fuji',
+  solana: 'Solana',
+  stellar: 'Stellar',
 };
 
 const tokenInfo: Record<Token, { decimals: number; logo: string }> = {
@@ -44,7 +46,7 @@ export default function BridgePage() {
   const [fromToken, setFromToken] = React.useState<Token>('USDC');
   const [toToken, setToToken] = React.useState<Token>('USDC');
   const [amount, setAmount] = React.useState('');
-  const [balance, setBalance] = React.useState('50,000.00');
+  const [balance] = React.useState('50,000.00');
   const [speed, setSpeed] = React.useState<BridgeSpeed>('FAST');
   const [step, setStep] = React.useState<'form' | 'estimate' | 'confirming' | 'executing' | 'success' | 'error'>('form');
   const [estimate, setEstimate] = React.useState<{ fee: string; bridgeFee: string; attestationFee: string; feeToken: Token; totalTime: string } | null>(null);
@@ -134,7 +136,7 @@ export default function BridgePage() {
                 <ChainSelector
                   value={fromChain}
                   onChange={setFromChain}
-                  chains={mockChains.map(id => ({ id, name: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
+                  chains={mockChains.map((id) => ({ id, name: chainNames[id], logo: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
                   label="From"
                   testnetOnly={true}
                   disabled={step !== 'form'}
@@ -154,7 +156,7 @@ export default function BridgePage() {
                 <ChainSelector
                   value={toChain}
                   onChange={setToChain}
-                  chains={mockChains.map(id => ({ id, name: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
+                  chains={mockChains.map((id) => ({ id, name: chainNames[id], logo: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
                   label="To"
                   testnetOnly={true}
                   disabled={step !== 'form'}

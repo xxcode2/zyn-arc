@@ -44,4 +44,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-export { Input };
+const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
+  ({ className, ...props }, ref) => (
+    <label ref={ref} className={cn('block text-xs font-medium text-cyan-300 mb-2', className)} {...props} />
+  )
+);
+Label.displayName = 'Label';
+
+const FieldError = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <p ref={ref} className={cn('mt-1.5 text-xs text-red-400', className)} {...props} />
+  )
+);
+FieldError.displayName = 'FieldError';
+
+export { Input, Label, FieldError };

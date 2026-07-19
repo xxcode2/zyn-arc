@@ -18,6 +18,8 @@ interface FeeBreakdownProps {
   className?: string;
   title?: string;
   showTotal?: boolean;
+  total?: number;
+  totalToken?: string;
 }
 
 const typeStyles: Record<string, { icon: string; color: string }> = {
@@ -33,14 +35,16 @@ export function FeeBreakdown({
   isLoading, 
   className, 
   title = 'Fee Breakdown',
-  showTotal = true 
+  showTotal = true,
+  total,
+  totalToken,
 }: FeeBreakdownProps) {
   const totalFees = items
     .filter(f => f.type !== 'total')
     .reduce((sum, fee) => sum + parseFloat(fee.value), 0);
 
   const displayItems = showTotal 
-    ? [...items, { label: 'Total', value: totalFees.toFixed(6), token: items[0]?.token || 'USDC', type: 'total' as const }]
+    ? [...items, { label: 'Total', value: (typeof total === 'number' ? total : totalFees).toFixed(6), token: totalToken || items[0]?.token || 'USDC', type: 'total' as const }]
     : items;
 
   if (isLoading) {

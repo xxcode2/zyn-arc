@@ -173,9 +173,9 @@ export interface AppKitConfig {
   apiKey: string;
   environment: 'testnet' | 'mainnet';
   adapters: {
-    viem?: any;
-    ethers?: any;
-    solana?: any;
+    viem?: unknown;
+    ethers?: unknown;
+    solana?: unknown;
   };
 }
 

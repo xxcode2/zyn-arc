@@ -9,7 +9,7 @@ import { AmountInput } from '@/components/AmountInput';
 import { ChainSelector } from '@/components/ChainSelector';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { Blockchain, Token } from '@/lib/appkit-types';
-import { Send, Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, RotateCcw } from 'lucide-react';
+import { Send, Loader2, CheckCircle, AlertCircle, RotateCcw } from 'lucide-react';
 
 const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism'];
 const mockTokens: Token[] = ['USDC', 'USDT', 'EURC'];
@@ -22,6 +22,8 @@ const chainNames: Record<Blockchain, string> = {
   optimism: 'Optimism Sepolia',
   polygon: 'Polygon Amoy',
   avalanche: 'Avalanche Fuji',
+  solana: 'Solana',
+  stellar: 'Stellar',
 };
 
 const tokenInfo: Record<Token, { decimals: number; logo: string }> = {
@@ -35,7 +37,7 @@ export default function SwapPage() {
   const [fromToken, setFromToken] = React.useState<Token>('USDC');
   const [toToken, setToToken] = React.useState<Token>('USDT');
   const [amount, setAmount] = React.useState('');
-  const [balance, setBalance] = React.useState('50,000.00');
+  const [balance] = React.useState('50,000.00');
   const [step, setStep] = React.useState<'form' | 'estimate' | 'confirming' | 'success' | 'error'>('form');
   const [estimate, setEstimate] = React.useState<{ outputAmount: string; priceImpact: string; fee: string; feeToken: Token; minReceived: string } | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -112,7 +114,7 @@ export default function SwapPage() {
             <ChainSelector
               value={chain}
               onChange={setChain}
-              chains={mockChains.map(id => ({ id, name: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
+              chains={mockChains.map((id) => ({ id, name: chainNames[id], logo: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
               label="Network"
               testnetOnly={true}
               disabled={step !== 'form'}
@@ -340,7 +342,7 @@ export default function SwapPage() {
                 <ul className="text-sm text-gray-400 space-y-1">
                   <li>• Swaps happen on the same chain (no bridging)</li>
                   <li>• 0.1% swap fee + network gas (paid in USDC)</li>
-                  <li>• Price impact < 0.01% for stablecoin pairs</li>
+                  <li>• Price impact &lt; 0.01% for stablecoin pairs</li>
                   <li>• Slippage tolerance: 0.5% default</li>
                 </ul>
               </div>

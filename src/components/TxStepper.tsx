@@ -34,6 +34,7 @@ export function TxStepper({ steps, currentStep, className }: TxStepperProps) {
   const sortedSteps = [...steps].sort((a, b) => 
     stepOrder.indexOf(a.id) - stepOrder.indexOf(b.id)
   );
+  void currentStep;
 
   return (
     <div className={cn('space-y-4', className)}>
