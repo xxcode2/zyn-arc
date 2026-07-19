@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Check, X, Loader2, AlertCircle } from 'lucide-react';
 
-interface BridgeStepData {
+interface TxStep {
   id: string;
   label: string;
   description?: string;
@@ -15,18 +15,19 @@ interface BridgeStepData {
 }
 
 interface TxStepperProps {
-  steps: BridgeStepData[];
-  currentStep?: number;
+  steps: TxStep[];
+  currentStep?: string;
   className?: string;
 }
 
-const stepOrder = ['approve', 'burn', 'attestation', 'mint'];
+const stepOrder = ['approve', 'burn', 'attestation', 'mint', 'complete'];
 
 const stepConfig: Record<string, { icon: string; color: string }> = {
   approve: { icon: '✍️', color: 'text-cyan-400' },
   burn: { icon: '🔥', color: 'text-orange-400' },
   attestation: { icon: '📜', color: 'text-purple-400' },
-  mint: { icon: '💚', color: 'text-green-400' },
+  mint: { icon: '✨', color: 'text-green-400' },
+  complete: { icon: '✅', color: 'text-cyan-400' },
 };
 
 export function TxStepper({ steps, currentStep, className }: TxStepperProps) {

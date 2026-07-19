@@ -9,9 +9,9 @@ import { AmountInput } from '@/components/AmountInput';
 import { ChainSelector } from '@/components/ChainSelector';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { Blockchain, Token } from '@/lib/appkit-types';
-import { Send, Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, QrCode, RotateCcw } from 'lucide-react';
+import { Send, Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, QrCode } from 'lucide-react';
 
-const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism', 'polygon', 'avalanche'];
+const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism'];
 const mockTokens: Token[] = ['USDC', 'USDT', 'EURC'];
 
 const chainNames: Record<Blockchain, string> = {
@@ -34,8 +34,8 @@ export default function SendPage() {
   const [chain, setChain] = React.useState<Blockchain>('arc_testnet');
   const [token, setToken] = React.useState<Token>('USDC');
   const [amount, setAmount] = React.useState('');
-  const [recipient, setRecipient] = React.useState('');
   const [balance, setBalance] = React.useState('50,000.00');
+  const [recipient, setRecipient] = React.useState('');
   const [step, setStep] = React.useState<'form' | 'estimate' | 'confirming' | 'success' | 'error'>('form');
   const [estimate, setEstimate] = React.useState<{ gasFee: string; totalFee: string } | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -50,6 +50,7 @@ export default function SendPage() {
   };
 
   const handleSend = async () => {
+    setStep('confirming');
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     if (Math.random() > 0.05) {

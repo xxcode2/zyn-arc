@@ -4,131 +4,201 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Plus, Minus, Max, Copy, Check } from 'lucide-react';
+import { Minus, Plus, Maximize2, Copy, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface AmountInputProps {
   value: string;
   onChange: (value: string) => void;
-  symbol?: string;
   balance?: string;
-  maxButtonLabel?: string;
+  symbol?: string;
+  decimals?: number;
+  maxDecimals?: number;
   placeholder?: string;
-  error?: string;
   disabled?: boolean;
-  className?: string;
+  error?: string;
+  label?: string;
+  showMaxButton?: boolean;
+  onMaxClick?: () => void;
 }
 
 export function AmountInput({
   value,
   onChange,
-  symbol = 'USDC',
   balance,
-  maxButtonLabel = 'Max',
+  symbol = 'USDC',
+  decimals = 6,
+  maxDecimals = 6,
   placeholder = '0.00',
-  error,
   disabled,
-  className,
+  error,
+  label,
+  showMaxButton = true,
+  onMaxClick,
 }: AmountInputProps) {
-  const [showMax, setShowMax] = React.useState(false);
-  const numericValue = parseFloat(value) || 0;
-  const numericBalance = parseFloat(balance || '0') || 0;
+  const [localValue, setLocalValue] = React.useState(value);
+  const [focused, setFocused] = React.useState(false);
+  const [showCopied, setShowCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!focused) setLocalValue(value);
+  }, [value, focused]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    // Allow only numbers and one decimal point
-    if (/^\d*\.?\d*$/.test(newValue)) {
+    let newValue = e.target.value;
+    
+    if (newValue === '') {
+      setLocalValue('');
+      onChange('');
+      return;
+    }
+
+    const regex = new RegExp(`^\\d*\\.?\\d{0,${maxDecimals}}$`);
+    if (regex.test(newValue)) {
+      setLocalValue(newValue);
       onChange(newValue);
     }
   };
 
-  const handleMax = () => {
-    if (balance) {
-      onChange(balance);
-      setShowMax(true);
-      setTimeout(() => setShowMax(false), 2000);
+  const handleMaxClick = () => {
+    if (balance && onMaxClick) {
+      onMaxClick();
     }
   };
 
-  const handleIncrement = (amount: number) => {
-    const newValue = Math.max(0, numericValue + amount);
-    onChange(newValue.toFixed(2));
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData('text');
+    if (/^\d*\.?\d*$/.test(text)) {
+      e.preventDefault();
+      const newValue = text.slice(0, maxDecimals + (text.includes('.') ? 1 : 0));
+      setLocalValue(newValue);
+      onChange(newValue);
+    }
   };
 
+  const balanceNum = balance ? parseFloat(balance) : 0;
+  const valueNum = localValue ? parseFloat(localValue) : 0;
+  const isMaxed = balance && Math.abs(valueNum - balanceNum) < 0.000001;
+  const hasError = !!error;
+  const isOverBalance = balance && valueNum > balanceNum;
+
   return (
-    <div className={cn('w-full', className)}>
-      <div className="relative">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-          <span className="text-lg font-mono">${symbol}</span>
+    <div className="w-full">
+      {label && (
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-medium text-cyan-300">{label}</label>
+          {balance && (
+            <span className="text-xs text-gray-500 font-mono">
+              Balance: {parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {symbol}
+            </span>
+          )}
         </div>
-        <Input
-          type="text"
-          value={value || ''}
-          onChange={handleChange}
-          placeholder={placeholder}
-          error={error}
-          disabled={disabled}
-          className="pl-12 pr-16 text-right font-mono text-lg"
-          inputMode="decimal"
-          autoComplete="off"
-        />
-        {showMax && (
+      )}
+      
+      <div className="relative">
+        <div className="relative">
+          <input
+            type="text"
+            value={localValue || ''}
+            onChange={handleChange}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onPaste={handlePaste}
+            disabled={disabled}
+            placeholder={placeholder}
+            className={cn(
+              'w-full appearance-none bg-gray-900/50 border rounded-xl px-4 py-4 pr-24 text-white text-lg font-mono',
+              'placeholder:text-gray-600',
+              'transition-all duration-200',
+              'focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50',
+              disabled && 'opacity-50 cursor-not-allowed',
+              hasError && 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50',
+              isOverBalance && !hasError && 'border-amber-500/50 focus:ring-amber-500/50 focus:border-amber-500/50',
+              (!hasError && !isOverBalance) && 'border-gray-700/50 hover:border-gray-600/50',
+              'rounded-xl'
+            )}
+            aria-invalid={hasError || isOverBalance}
+            aria-describedby={hasError ? 'amount-error' : isOverBalance ? 'amount-warning' : undefined}
+          />
+          
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {showMaxButton && balance && !disabled && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleMaxClick}
+                className={cn(
+                  'px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all',
+                  isMaxed 
+                    ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                    : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 hover:text-gray-300 border border-gray-700/50'
+                )}
+                aria-label="Max amount"
+              >
+                {isMaxed ? <CheckCircle className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+              </motion.button>
+            )}
+            <span className={cn('text-sm text-gray-500 px-1', focused && 'text-cyan-400')}>
+              {symbol}
+            </span>
+          </div>
+        </div>
+
+        {hasError && (
+          <motion.p
+            id="amount-error"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-2 text-xs text-red-400 flex items-center gap-1"
+          >
+            <AlertCircle className="h-3 w-3" />
+            {error}
+          </motion.p>
+        )}
+
+        {isOverBalance && !hasError && (
+          <motion.p
+            id="amount-warning"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-2 text-xs text-amber-400 flex items-center gap-1"
+          >
+            <AlertCircle className="h-3 w-3" />
+            Insufficient balance
+          </motion.p>
+        )}
+
+        {showCopied && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="absolute right-16 top-1/2 -translate-y-1/2"
+            className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-green-500/20 border border-green-500/30 text-green-400 text-xs rounded-lg flex items-center gap-1 whitespace-nowrap shadow-lg"
           >
-            <span className="px-2 py-0.5 text-xs font-medium text-green-400 bg-green-500/10 rounded-full border border-green-500/30">
-              Max
-            </span>
+            <CheckCircle className="w-3.5 h-3.5" />
+            Copied to clipboard
           </motion.div>
         )}
       </div>
 
-      {balance && numericBalance > 0 && (
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleIncrement(-0.01)}
-              disabled={disabled || numericValue <= 0}
-              className="h-9 w-9 p-0"
-              aria-label="Decrease by 0.01"
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleIncrement(0.01)}
-              disabled={disabled || numericValue >= numericBalance}
-              className="h-9 w-9 p-0"
-              aria-label="Increase by 0.01"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleMax}
-              disabled={disabled || numericValue >= numericBalance}
-              className="flex-1 ml-2"
-            >
-              <Max className="h-4 w-4 mr-1.5" />
-              {maxButtonLabel}
-            </Button>
-          </div>
-          <p className="text-xs text-gray-500">
-            Available: <span className="text-cyan-300 font-mono">{parseFloat(balance).toLocaleString()}</span> {symbol}
-          </p>
-        </div>
-      )}
-
-      {error && !balance && (
-        <p className="mt-2 text-xs text-red-400">{error}</p>
-      )}
+      <AnimatePresence>
+        {focused && balance && !isMaxed && (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            onClick={handleMaxClick}
+            className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gray-800/50 border border-gray-700/50 text-gray-400 hover:bg-gray-700/50 hover:border-gray-600/50 hover:text-gray-300 transition-all text-sm"
+          >
+            <span className="flex items-center gap-1">
+              <Plus className="w-4 h-4" />
+              Use max balance
+            </span>
+            <span className="font-mono text-white bg-gray-900/50 px-2 py-0.5 rounded">
+              {parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {symbol}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

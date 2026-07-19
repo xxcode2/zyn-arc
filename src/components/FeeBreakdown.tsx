@@ -7,13 +7,13 @@ import { Card, CardContent } from '@/components/ui/Card';
 
 interface FeeItem {
   label: string;
-  amount: string;
+  value: string;
   token: string;
   type?: 'fee' | 'gas' | 'bridge' | 'swap' | 'total';
 }
 
 interface FeeBreakdownProps {
-  fees: FeeItem[];
+  items: FeeItem[];
   isLoading?: boolean;
   className?: string;
   title?: string;
@@ -29,19 +29,19 @@ const typeStyles: Record<string, { icon: string; color: string }> = {
 };
 
 export function FeeBreakdown({ 
-  fees, 
+  items, 
   isLoading, 
   className, 
   title = 'Fee Breakdown',
   showTotal = true 
 }: FeeBreakdownProps) {
-  const totalFees = fees
+  const totalFees = items
     .filter(f => f.type !== 'total')
-    .reduce((sum, fee) => sum + parseFloat(fee.amount), 0);
+    .reduce((sum, fee) => sum + parseFloat(fee.value), 0);
 
-  const displayFees = showTotal 
-    ? [...fees, { label: 'Total', amount: totalFees.toFixed(6), token: fees[0]?.token || 'USDC', type: 'total' as const }]
-    : fees;
+  const displayItems = showTotal 
+    ? [...items, { label: 'Total', value: totalFees.toFixed(6), token: items[0]?.token || 'USDC', type: 'total' as const }]
+    : items;
 
   if (isLoading) {
     return (
@@ -65,7 +65,7 @@ export function FeeBreakdown({
       <CardContent className="p-5">
         <h4 className="text-sm font-medium text-cyan-300 mb-4 uppercase tracking-wider">{title}</h4>
         <div className="space-y-3">
-          {displayFees.map((fee, index) => {
+          {displayItems.map((fee, index) => {
             const style = typeStyles[fee.type || 'fee'];
             const isTotal = fee.type === 'total';
             
@@ -88,7 +88,7 @@ export function FeeBreakdown({
                 </div>
                 <div className="flex items-center gap-2 text-right">
                   <span className={cn('font-mono text-sm', isTotal && 'font-bold text-lg', style.color)}>
-                    {parseFloat(fee.amount).toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 })}
+                    {parseFloat(fee.value).toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 })}
                   </span>
                   <span className={cn('text-xs text-gray-500', isTotal && 'text-gray-400')}>
                     {fee.token}
@@ -105,7 +105,7 @@ export function FeeBreakdown({
 
 interface EstimateCardProps {
   title: string;
-  amount: string;
+  value: string;
   token: string;
   fee?: string;
   feeToken?: string;
@@ -113,7 +113,7 @@ interface EstimateCardProps {
   className?: string;
 }
 
-export function EstimateCard({ title, amount, token, fee, feeToken, isLoading, className }: EstimateCardProps) {
+export function EstimateCard({ title, value, token, fee, feeToken, isLoading, className }: EstimateCardProps) {
   if (isLoading) {
     return (
       <Card className={cn('p-4', className)}>
@@ -130,7 +130,7 @@ export function EstimateCard({ title, amount, token, fee, feeToken, isLoading, c
     <Card className={cn('p-4', className)}>
       <p className="text-xs font-medium text-cyan-300 uppercase tracking-wider mb-1">{title}</p>
       <div className="font-mono text-2xl font-bold text-white mb-1">
-        {parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
+        {parseFloat(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
         <span className="text-sm font-normal text-gray-400 ml-1">{token}</span>
       </div>
       {fee && (

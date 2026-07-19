@@ -4,11 +4,12 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/Card';
-import { ArrowUpRight, ArrowDownLeft, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Loader2, ArrowUpRight, ArrowDownLeft, RefreshCw } from 'lucide-react';
 
 interface BalanceCardProps {
   totalBalance: string;
-  chainBalances: { chain: string; balance: string; symbol: string; logo?: string }[];
+  chainBalances: { chain: string; balance: string; symbol: string }[];
   isLoading?: boolean;
   onRefresh?: () => void;
   className?: string;

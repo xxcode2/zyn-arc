@@ -178,3 +178,28 @@ export interface AppKitConfig {
     solana?: any;
   };
 }
+
+export interface AppKit {
+  bridge: {
+    estimateBridgeFee: (params: BridgeParams) => Promise<BridgeFeeEstimate>;
+    bridge: (params: BridgeParams) => Promise<BridgeResult>;
+    retryBridge: (txHash: string) => Promise<BridgeResult>;
+  };
+  swap: {
+    estimateSwapFee: (params: SwapParams) => Promise<SwapFeeEstimate>;
+    swap: (params: SwapParams) => Promise<SwapResult>;
+  };
+  send: {
+    estimateSendFee: (params: SendParams) => Promise<FeeEstimate>;
+    send: (params: SendParams) => Promise<SendResult>;
+  };
+  unifiedBalance: {
+    getBalances: () => Promise<UnifiedBalance>;
+    deposit: (params: DepositParams) => Promise<UnifiedBalance>;
+    spend: (params: SpendParams) => Promise<UnifiedBalance>;
+    delegate: (params: DepositParams) => Promise<UnifiedBalance>;
+    removeFund: (params: SpendParams) => Promise<UnifiedBalance>;
+  };
+  on<K extends keyof AppKitEvents>(event: K, listener: AppKitEvents[K]): () => void;
+  getSupportedChains: () => Promise<SupportedChain[]>;
+}

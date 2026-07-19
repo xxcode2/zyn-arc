@@ -4,10 +4,16 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronDown, Check } from 'lucide-react';
 
+interface SelectOption {
+  value: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
-  options: { value: string; label: string; icon?: React.ReactNode }[];
+  options: SelectOption[];
   placeholder?: string;
 }
 

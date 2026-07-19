@@ -9,8 +9,8 @@ import { AmountInput } from '@/components/AmountInput';
 import { ChainSelector } from '@/components/ChainSelector';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { TxStepper } from '@/components/TxStepper';
-import { Blockchain, Token, BridgeSpeed } from '@/lib/appkit-types';
-import { GitBranch, Loader2, CheckCircle, AlertCircle, ExternalLink, ArrowLeftRight, RotateCcw, ChevronRight } from 'lucide-react';
+import { Blockchain, Token, BridgeSpeed, SupportedChain } from '@/lib/appkit-types';
+import { GitBranch, Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, ArrowLeftRight, RotateCcw, ChevronRight } from 'lucide-react';
 
 const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism', 'polygon', 'avalanche'];
 const mockTokens: Token[] = ['USDC', 'USDT', 'EURC'];
@@ -84,9 +84,9 @@ export default function BridgePage() {
     
     // Simulate each step
     for (let i = 0; i < bridgeSteps.length; i++) {
-      const stepId = bridgeSteps[i].id;
       await new Promise(resolve => setTimeout(resolve, isFast ? 2000 : 3000));
       
+      const stepId = bridgeSteps[i].id;
       const hash = '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
       setTxHashes(prev => ({ ...prev, [stepId]: hash }));
       setCurrentBridgeStep(i + 1);
@@ -137,6 +137,7 @@ export default function BridgePage() {
                   chains={mockChains.map(id => ({ id, name: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
                   label="From"
                   testnetOnly={true}
+                  disabled={step !== 'form'}
                 />
                 
                 <Button
@@ -156,6 +157,7 @@ export default function BridgePage() {
                   chains={mockChains.map(id => ({ id, name: chainNames[id], nativeToken: 'USDC', supportedTokens: mockTokens, isTestnet: true }))}
                   label="To"
                   testnetOnly={true}
+                  disabled={step !== 'form'}
                 />
               </div>
 

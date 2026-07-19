@@ -8,42 +8,69 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+        ink: {
+          DEFAULT: '#0B0E14',
+          soft: '#12161F',
+          line: '#232838',
         },
-        dark: {
-          900: '#0a0a0a',
-          800: '#121212',
-          700: '#1e1e1e',
+        paper: {
+          DEFAULT: '#F6F3EC',
+          dim: '#EDE8DB',
+          line: '#D8D2C0',
+        },
+        seal: {
+          green: '#1F6B4A',
+          greenLight: '#2E8B63',
+          gold: '#C9A24B',
+          rust: '#B3462F',
+        },
+        muted: '#8A93A6',
+      },
+      fontFamily: {
+        sans: [
+          'ui-sans-serif',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
+        mono: [
+          'ui-monospace',
+          '"SF Mono"',
+          '"Roboto Mono"',
+          'Menlo',
+          'Consolas',
+          'monospace',
+        ],
+      },
+      backgroundImage: {
+        grain: "radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px)",
+      },
+      backgroundSize: {
+        grain: '18px 18px',
+      },
+      keyframes: {
+        stamp: {
+          '0%': { transform: 'scale(2.2) rotate(-14deg)', opacity: '0' },
+          '55%': { transform: 'scale(0.92) rotate(-8deg)', opacity: '1' },
+          '75%': { transform: 'scale(1.04) rotate(-10deg)' },
+          '100%': { transform: 'scale(1) rotate(-8deg)', opacity: '1' },
+        },
+        pulseLine: {
+          '0%': { strokeDashoffset: '240' },
+          '100%': { strokeDashoffset: '0' },
+        },
+        ticker: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
       animation: {
-        'fade-in': 'fadeIn 0.6s ease-out',
-        'slide-up': 'slideUp 0.5s ease-out',
-        'pulse-soft': 'pulseSoft 2s infinite',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(20px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        pulseSoft: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.6' },
-        },
+        stamp: 'stamp 0.5s cubic-bezier(.2,1.4,.4,1) forwards',
+        ticker: 'ticker 22s linear infinite',
       },
     },
   },

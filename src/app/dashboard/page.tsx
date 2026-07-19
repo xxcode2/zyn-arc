@@ -7,26 +7,17 @@ import { BalanceCard } from '@/components/BalanceCard';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ArrowUpRight, ArrowDownLeft, ExternalLink, GitBranch, ArrowLeftRight, History, Loader2, Send, SwapHorizontal, Wallet, Globe, ChevronDown, Plus, Minus, Maximize2, CheckCircle, AlertCircle, RotateCcw, QrCode, Copy, Scan } from 'lucide-react';
-import { Blockchain, Token } from '@/lib/appkit-types';
+import { Blockchain, SupportedChain, SupportedToken, Token } from '@/lib/appkit-types';
 
-const mockChains: Blockchain[] = ['arc_testnet', 'ethereum', 'base', 'arbitrum', 'optimism', 'polygon', 'avalanche'];
-const mockTokens: Token[] = ['USDC', 'USDT', 'EURC'];
-
-const chainNames: Record<Blockchain, string> = {
-  arc_testnet: 'Arc Testnet',
-  ethereum: 'Ethereum Sepolia',
-  base: 'Base Sepolia',
-  arbitrum: 'Arbitrum Sepolia',
-  optimism: 'Optimism Sepolia',
-  polygon: 'Polygon Amoy',
-  avalanche: 'Avalanche Fuji',
-};
-
-const tokenInfo: Record<Token, { decimals: number; logo: string }> = {
-  USDC: { decimals: 6, logo: '💲' },
-  USDT: { decimals: 6, logo: '💲' },
-  EURC: { decimals: 6, logo: '💶' },
-};
+const mockChains: SupportedChain[] = [
+  { id: 'arc_testnet', name: 'Arc Testnet', logo: '🔷', nativeToken: 'USDC', supportedTokens: ['USDC', 'USDT', 'EURC'], isTestnet: true },
+  { id: 'ethereum', name: 'Ethereum Sepolia', logo: 'Ξ', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'base', name: 'Base Sepolia', logo: '🔵', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'arbitrum', name: 'Arbitrum Sepolia', logo: '🔵', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'optimism', name: 'Optimism Sepolia', logo: '🔴', nativeToken: 'ETH', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'polygon', name: 'Polygon Amoy', logo: '🟣', nativeToken: 'POL', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+  { id: 'avalanche', name: 'Avalanche Fuji', logo: '🔺', nativeToken: 'AVAX', supportedTokens: ['USDC', 'USDT'], isTestnet: true },
+];
 
 const mockBalances = [
   { chain: 'Arc Testnet', balance: '12,450.00', symbol: 'USDC' },
@@ -175,9 +166,9 @@ export default function DashboardPage() {
         >
           <h2 className="text-xl font-semibold text-white mb-4">Supported Networks</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {mockChains.map((chainId, index) => (
+            {mockChains.map((chain, index) => (
               <motion.div
-                key={chainId}
+                key={chain.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.5 + index * 0.03 }}
@@ -185,15 +176,17 @@ export default function DashboardPage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-xl">
-                    🔷
+                    {chain.logo}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white truncate">{chainNames[chainId]}</p>
-                    <p className="text-xs text-gray-500">USDC • {chainId}</p>
+                    <p className="font-medium text-white truncate">{chain.name}</p>
+                    <p className="text-xs text-gray-500">{chain.nativeToken} • {chain.supportedTokens.join(', ')}</p>
                   </div>
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                    Testnet
-                  </span>
+                  {chain.isTestnet && (
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+                      Testnet
+                    </span>
+                  )}
                 </div>
               </motion.div>
             ))}
